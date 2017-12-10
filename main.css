@@ -1,30 +1,47 @@
 .container {
-	width: 280px;
+	width: 400px;
 	min-height: 100px;
-	max-height: 300px;
 	overflow-y: auto;
 	padding: 10px 5px;
 }
 
-table {
-	margin: 0 auto;
-	border-collapse: collapse;
+.row {
+	height: 28px;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: flex-start;
+	border: 1px dashed #eee;
+}
+
+.item__name {
+	width: 50%;
+	font-size: 13px;
+	font-style: italic;
+	color: red;
+}
+
+.item__value {
+	width: 50%;
+	font-size: 15px;
+	font-weight: bold;
+}
+
+.btn {
+	width: 100%;
+	margin-bottom: 8px;
+	height: 32px;
+	background-color: green;
+	color: #fff;
+	font-size: 16px;
+	border-radius: 20px;
 	text-align: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
-table th {
-	padding: 8px 25px;
-}
-
-table td {
-	padding: 8px 25px;
-}
-
-tbody tr:hover {
-	background: #f5fafe;
-}
-
-.add {
-	text-align: center;
-	margin-top: 10px;
+.btn__submit {
+	background-color: yellow;
+	color: #333;
 }
