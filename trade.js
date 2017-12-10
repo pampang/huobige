@@ -56,15 +56,27 @@ const getCurrentAssertList = () => {
 /**
  * 获取当前交易列表
  */
-const getTradeList = () => {
+const getTradeList = async () => {
 	const tradeList = [];
 	const $priceList = $('.list-content table tbody tr');
 	const SEARCH_LIMIT = localStorage.searchLimit || 3;
 	for (let i = 0, len = SEARCH_LIMIT; i < len; i += 1) {
 		const item = $priceList.eq(i);
 		// 获取userId(用以匹配黑名单); 获取出卖的价格；获取买入链接
-		const userInfoHref = item.find('.user-info a').attr('href');
-		const userId = userInfoHref.match(/\?id=(\d*)/)[1];
+		const userName = item.find('.user-info a').text();
+		// const userId = userInfoHref.match(/\?id=(\d*)/)[1];
+
+		// 检查黑名单
+		const blacklist = await new Promise((resolve, reject) => {
+			chrome.storage.local.get('blacklist', (result) => {
+				resolve(result.blacklist);
+			});
+		});
+
+		if (blacklist.indexOf(userName) > -1) {
+			continue;
+		}
+
 
 		// 获取价格
 		const tradePriceText = item.find('.price p').text().trim().replace(',', '');
@@ -74,7 +86,7 @@ const getTradeList = () => {
 		const tradeHref = location.origin + item.find('.Btn a').attr('href');
 
 		tradeList.push({
-			userId,
+			userName,
 			tradePrice,
 			tradeHref,
 		});
@@ -89,7 +101,7 @@ const getTradeList = () => {
 }
 
 const checkTrade = async () => {
-	const tradeList = getTradeList();
+	const tradeList = await getTradeList();
 	// const assertList = getCurrentAssertList();
 
 	// if (!tradeList || !assertList) {
