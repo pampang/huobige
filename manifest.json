@@ -18,12 +18,15 @@
 	},
 	"content_scripts": [
 		{
-			"matches": ["https://otc.huobi.pro/*"],
+			"matches": ["https://otc.huobi.pro/trade/list.html*"],
 			"js": ["vendor/jquery-1.12.4.min.js", "trade.js"]
+		},
+		{
+			"matches": ["https://otc.huobi.pro/trade/deal/*"],
+			"js": ["vendor/jquery-1.12.4.min.js", "deal.js"]
 		}
 	],
 	"permissions": [
-		"http://hq.sinajs.cn/list=*",
 		"storage"
     ]
 }
