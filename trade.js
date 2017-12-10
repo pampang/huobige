@@ -1,3 +1,17 @@
+// const getSearch = (name) => {
+//   return location.search.match(new RegExp('(\\\?|&)' + name + '=([^;]*)(&|$)')) == null ? null : decodeURIComponent(RegExp.$2);
+// };
+
+function getSearch(name) {
+	var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)","i");
+	var result = window.location.search.substr(1).match(reg);
+	if (result!=null) {
+return result[2];
+	} else {
+return null;
+	};
+}
+
 /**
  * 获取当前BTC/USDT
  * 元素索引：
@@ -74,14 +88,67 @@ const getTradeList = () => {
 	return tradeList;
 }
 
-const checkTrade = () => {
+const checkTrade = async () => {
 	const tradeList = getTradeList();
-	const assertList = getCurrentAssertList();
+	// const assertList = getCurrentAssertList();
 
-	if (!tradeList || !assertList) {
-		setTimeout(() => {
+	// if (!tradeList || !assertList) {
+	if (!tradeList) {
+		this.timer = setTimeout(() => {
 			checkTrade();
 		}, 500);
+		return;
+	} else {
+		clearTimeout(this.timer);
+	}
+
+	// 获取当前价格
+	const priceRange = await new Promise((resolve, reject) => {
+		chrome.storage.local.get(['btcHigh', 'btcLow', 'usdtHigh', 'usdtLow'], (result) => {
+			resolve(result);
+		});
+	});
+
+	const coinType = getSearch('coin') == '1' ? 'btc' : 'usdt';
+	const tradeType = getSearch('type') == '1' ? 'buy' : 'sell';
+
+	// 比较当前配置的价格，如果合适则下单
+	if (coinType === 'btc') {
+		// 比特币交易
+		tradeList.forEach((tradeItem) => {
+			if (compareTrade(tradeType, tradeItem.tradePrice, priceRange.btcLow, priceRange.btcHigh)) {
+				console.log('shouldGo', tradeItem);
+				window.open(tradeItem.tradeHref);
+			}
+		});
+	}
+
+	if (coinType === 'usdt') {
+		// usdt交易
+		tradeList.forEach((tradeItem) => {
+			if (compareTrade(tradeType, tradeItem.tradePrice, priceRange.usdtLow, priceRange.usdtHigh)) {
+				console.log('shouldGo', tradeItem);
+				window.open(tradeItem.tradeHref);
+			}
+		});
+	}
+}
+
+const compareTrade = (tradeType, tradePrice, lowPrice, highPrice) => {
+	if (tradeType === 'buy') {
+		// 交易价格大于最高买入价格，放弃
+		if (Number(tradePrice) > Number(highPrice)) {
+			return false;
+		} else {
+			return true;
+		}
+	} else if (tradeType === 'sell') {
+		// 交易价格小于最低卖出价格，放弃
+		if (Number(tradePrice) < Number(lowPrice)) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 }
 
