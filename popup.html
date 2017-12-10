@@ -3,23 +3,81 @@
 <head>
 	<meta charset="utf-8">
 	<title>火币哥</title>
+	<!-- <link rel="stylesheet" type="text/css" href="vendor/boostrap-3.3.7.min.css"> -->
 	<link rel="stylesheet" type="text/css" href="main.css">
 </head>
+<!-- 修改按钮 -->
+<!-- 提交按钮 -->
 <body>
-	<div class="container">
-		<h1>火币哥</h1>
+	<div id="root" class="container">
+		<!-- 启停按钮 -->
+		<button v-on:click="toggleOnGoing" id="start" class="btn">
+			{{ongoing ? '停止' : '开启'}}
+		</button>
+
+		<h3>余额</h3>
+		<!-- 剩余可用币展示 -->
 		<div>
-			<p>
-				<span>可用btc: </span>
-				<span id="btc">加载中...</span>
+			<p class="row">
+				<span class="item__name">可用btc: </span>
+				<span id="btc" class="item__value">{{ btcNumber }}</span>
 			</p>
-			<p>
-				<span>可用usdt: </span>
-				<span id="usdt">加载中...</span>
+			<p class="row">
+				<span class="item__name">可用usdt: </span>
+				<span id="usdt" class="item__value">{{ usdtNumber }}</span>
 			</p>
 		</div>
+
+		<h3>设置</h3>
+		<!-- 表单 -->
+		<div>
+			<p class="row">
+				<label class="item__name">btc最高买入价格：</label>
+				<input v-model="btcHigh" :disabled="!modifying" type="number" class="item__value" />
+			</p>
+			<p class="row">
+				<label class="item__name">btc最低卖出价格：</label>
+				<input v-model="btcLow" :disabled="!modifying" type="number" class="item__value" />
+			</p>
+			<p class="row">
+				<label class="item__name">usdt最高买入价格：</label>
+				<input v-model="usdtHigh" :disabled="!modifying" type="number" class="item__value" />
+			</p>
+			<p class="row">
+				<label class="item__name">usdt最低卖出价格：</label>
+				<input v-model="usdtLow" :disabled="!modifying" type="number" class="item__value" />
+			</p>
+			<p class="row">
+				<label class="item__name">单次最大买入(CNY)：</label>
+				<input v-model="buyMaxLimit" :disabled="!modifying" type="number" class="item__value" />
+			</p>
+			<p class="row">
+				<label class="item__name">单次最大卖出(CNY)：</label>
+				<input v-model="sellMaxLimit" :disabled="!modifying" type="number" class="item__value" />
+			</p>
+		</div>
+		<button v-if="!modifying" v-on:click="toggleModify" class="btn btn__submit">
+			修改
+		</button>
+		<button v-if="modifying" v-on:click="submitModify" class="btn btn__submit">
+			提交
+		</button>
+		<button v-if="modifying" v-on:click="toggleModify" class="btn btn__cancel">
+			取消
+		</button>
+
+		<h3>黑名单</h3>
+		<p>{{blacklist.join('，')}}</p>
+		<p v-for="item in blacklist">
+			<span>{{item}}</span>
+		</p>
+		<p class="row">
+			<label class="">添加黑名单：</label>
+			<input v-model="newBlackItem" type="text" />
+			<button v-on:click="addBlackItem">确定</button>
+		</p>
 	</div>
-	<script src="vendor/jquery-1.12.4.min.js"></script>
+	<script src="vendor/vue.js"></script>
 	<script src="main.js"></script>
 </body>
 </html>
