@@ -74,6 +74,12 @@
           blacklist: this.blacklist,
         });
       },
+      deleteBlackItem(index) {
+        this.blacklist = this.blacklist.slice(0, index).concat(this.blacklist.slice(index + 1));
+        chrome.storage.local.set({
+          blacklist: this.blacklist,
+        });
+      },
     }
   });
 

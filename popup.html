@@ -67,10 +67,9 @@
 		</button>
 
 		<h3>黑名单</h3>
-		<p>{{blacklist.join('，')}}</p>
-		<p v-for="item in blacklist">
-			<span>{{item}}</span>
-		</p>
+		<button class="blackitem" v-for="item in blacklist" v-on:click="deleteBlackItem($index)" track-by="$index">
+			{{item}}
+		</button>
 		<p class="row">
 			<label class="">添加黑名单：</label>
 			<input v-model="newBlackItem" type="text" />
