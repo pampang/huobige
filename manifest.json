@@ -1,0 +1,29 @@
+{
+	"manifest_version": 2,
+	"name": "huobi helper",
+	"version": "1.0",
+	"description": "huobi helper",
+	"icons": {
+        "16": "images/icon16.png",
+        "48": "images/icon48.png",
+        "128": "images/icon128.png"
+    },
+	"browser_action": {
+		"default_icon": {
+            "19": "images/icon19.png",
+            "38": "images/icon38.png"
+        },
+		"default_title": "huobi helper",
+		"default_popup": "popup.html"
+	},
+	"content_scripts": [
+		{
+			"matches": ["https://otc.huobi.pro/*"],
+			"js": ["vendor/jquery-1.12.4.min.js", "trade.js"]
+		}
+	],
+	"permissions": [
+		"http://hq.sinajs.cn/list=*",
+		"storage"
+    ]
+}
