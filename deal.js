@@ -98,6 +98,40 @@ const makeDeal = async () => {
       document.getElementById("money").dispatchEvent(oEvent);
   }
   Podium.keyup(37);
+
+  // 确定买入
+  await new Promise((resolve, reject) => {
+    setTimeout(() => {
+      $('#submitOrder').click();
+      resolve();
+    }, 100);
+  });
+
+  // 提交订单按钮
+  await new Promise((resolve, reject) => {
+    setTimeout(() => {
+      // chrome 下点击有 bug。
+      // http://blog.51cto.com/polaris/269758
+      // http://johnshen0708.iteye.com/blog/1335978
+      const e = document.createEvent('MouseEvent');
+      e.initEvent('click', false, false);
+      $('.layui-layer-btn0').get(0).dispatchEvent(e);
+      resolve();
+    }, 500);
+  });
+
+  // 创建订单成功的确定按钮
+  await new Promise((resolve, reject) => {
+    setTimeout(() => {
+      // chrome 下点击有 bug。
+      // http://blog.51cto.com/polaris/269758
+      // http://johnshen0708.iteye.com/blog/1335978
+      const e = document.createEvent('MouseEvent');
+      e.initEvent('click', false, false);
+      $('.layui-layer-btn0').get(0).dispatchEvent(e);
+      resolve();
+    }, 500);
+  });
 };
 
 const start = async () => {
@@ -111,3 +145,5 @@ const start = async () => {
 		makeDeal();
 	}
 }
+
+start();
