@@ -1,8 +1,4 @@
-// const getSearch = (name) => {
-//   return location.search.match(new RegExp('(\\\?|&)' + name + '=([^;]*)(&|$)')) == null ? null : decodeURIComponent(RegExp.$2);
-// };
-
-function getSearch(name) {
+const getSearch = (name) => {
 	var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)","i");
 	var result = window.location.search.substr(1).match(reg);
 	if (result!=null) {
