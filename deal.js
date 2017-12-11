@@ -115,7 +115,7 @@ const makeDeal = async () => {
       // http://johnshen0708.iteye.com/blog/1335978
 
       const alertText = $('.layui-layer-content').text();
-      console.log(alertText);
+      // alert(alertText);
       if (alertText.indexOf('请注意价格浮动产生的影响，是否确认以') > -1) {
         // 到了这一步，停止进行交易了。同时通知人来跟进
         chrome.storage.local.set({
@@ -133,7 +133,7 @@ const makeDeal = async () => {
         console.log('will shutdown');
         window.close();
       }
-    }, 500);
+    }, 1000);
   });
 
   // TODO: 检查报错
