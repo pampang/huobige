@@ -170,6 +170,8 @@ const start = async () => {
 
 	if (result.ongoing) {
 		checkTrade();
+	} else {
+		window.close();
 	}
 	if (result.ongoing && result.refreshTime) {
 		setTimeout(() => {
