@@ -113,12 +113,30 @@ const makeDeal = async () => {
       // chrome 下点击有 bug。
       // http://blog.51cto.com/polaris/269758
       // http://johnshen0708.iteye.com/blog/1335978
-      const e = document.createEvent('MouseEvent');
-      e.initEvent('click', false, false);
-      $('.layui-layer-btn0').get(0).dispatchEvent(e);
-      resolve();
+
+      const alertText = $('.layui-layer-content').text();
+      console.log(alertText);
+      if (alertText.indexOf('请注意价格浮动产生的影响，是否确认以') > -1) {
+        // 到了这一步，停止进行交易了。同时通知人来跟进
+        chrome.storage.local.set({
+          ongoing: false,
+        });
+
+        // chrome 下点击有 bug。
+        // http://blog.51cto.com/polaris/269758
+        // http://johnshen0708.iteye.com/blog/1335978
+        const e = document.createEvent('MouseEvent');
+        e.initEvent('click', false, false);
+        $('.layui-layer-btn0').get(0).dispatchEvent(e);
+        resolve();
+      } else {
+        console.log('will shutdown');
+        window.close();
+      }
     }, 500);
   });
+
+  // TODO: 检查报错
 
   // 创建订单成功的确定按钮
   await new Promise((resolve, reject) => {
