@@ -100,4 +100,14 @@ const makeDeal = async () => {
   Podium.keyup(37);
 };
 
-makeDeal();
+const start = async () => {
+	const ongoing = await new Promise((resolve, reject) => {
+		chrome.storage.local.get('ongoing', (result) => {
+			resolve(result.ongoing);
+		});
+	});
+
+	if (ongoing) {
+		makeDeal();
+	}
+}

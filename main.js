@@ -84,9 +84,6 @@
   });
 
   chrome.storage.local.get(['ongoing', 'assertList', 'btcHigh', 'btcLow', 'usdtHigh', 'usdtLow', 'buyMaxLimit', 'sellMaxLimit', 'blacklist'], (result) => {
-    // if (result.ongoing === true) {
-    //   $('#strat').html('正在运行，点击停止');
-    // }
     // 写入当前状态
     App.ongoing = result.ongoing;
 

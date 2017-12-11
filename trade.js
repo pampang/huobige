@@ -164,6 +164,16 @@ const compareTrade = (tradeType, tradePrice, lowPrice, highPrice) => {
 	}
 }
 
-checkTrade();
-// getCurrentAssertList();
-// getTradeList();
+const start = async () => {
+	const ongoing = await new Promise((resolve, reject) => {
+		chrome.storage.local.get('ongoing', (result) => {
+			resolve(result.ongoing);
+		});
+	});
+
+	if (ongoing) {
+		checkTrade();
+	}
+}
+
+start();
