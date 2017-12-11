@@ -69,14 +69,14 @@ const getTradeList = async () => {
 			});
 		});
 
-		if (blacklist.indexOf(userName) > -1) {
+		if (blacklist && blacklist.indexOf(userName) > -1) {
 			continue;
 		}
 
 
 		// 获取价格
 		const tradePriceText = item.find('.price p').text().trim().replace(',', '');
-		const tradePrice = tradePriceText.match(/(\d+)/)[1];
+		const tradePrice = tradePriceText.match(/(\d+(.\d+)?)/)[1];
 
 		// 获取下单链接
 		const tradeHref = location.origin + item.find('.Btn a').attr('href');
@@ -98,7 +98,7 @@ const getTradeList = async () => {
 
 const checkTrade = async () => {
 	const tradeList = await getTradeList();
-	// const assertList = getCurrentAssertList();
+	const assertList = getCurrentAssertList();
 
 	// if (!tradeList || !assertList) {
 	if (!tradeList) {
@@ -160,15 +160,22 @@ const compareTrade = (tradeType, tradePrice, lowPrice, highPrice) => {
 	}
 }
 
+let timer;
 const start = async () => {
-	const ongoing = await new Promise((resolve, reject) => {
-		chrome.storage.local.get('ongoing', (result) => {
-			resolve(result.ongoing);
+	const result = await new Promise((resolve, reject) => {
+		chrome.storage.local.get(['ongoing', 'refreshTime'], (result) => {
+			resolve(result);
 		});
 	});
 
-	if (ongoing) {
+	if (result.ongoing) {
 		checkTrade();
+	}
+	if (result.ongoing && result.refreshTime) {
+		setTimeout(() => {
+			// location.reload();
+			location.replace(location.href);
+		}, Number(result.refreshTime) * 1000);
 	}
 }
 

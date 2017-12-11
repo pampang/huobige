@@ -32,6 +32,10 @@
 		<!-- 表单 -->
 		<div>
 			<p class="row">
+				<label class="item__name">检查刷新间隔(s)：</label>
+				<input v-model="refreshTime" :disabled="!modifying" type="number" class="item__value" />
+			</p>
+			<p class="row">
 				<label class="item__name">btc最高买入价格：</label>
 				<input v-model="btcHigh" :disabled="!modifying" type="number" class="item__value" />
 			</p>

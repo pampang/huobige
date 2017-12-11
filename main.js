@@ -4,8 +4,9 @@
     data() {
       return {
         ongoing: false,
-        btcNumber: '加载中',
-        usdtNumber: '加载中',
+        btcNumber: '打开火币网页面时刷新',
+        usdtNumber: '打开火币网页面时刷新',
+        refreshTime: null,
         btcHigh: null,
         btcLow: null,
         usdtHigh: null,
@@ -36,9 +37,10 @@
         this.modifying = !this.modifying;
       },
       submitModify() {
-        console.log(this.btcHigh);
         let errorText;
-        if (!this.btcHigh) {
+        if (!this.refreshTime) {
+          errorText = '请填写：检查刷新间隔(s)！';
+        } else if (!this.btcHigh) {
           errorText = '请填写：btc最高买入价格！';
         } else if (!this.btcLow) {
           errorText = '请填写：btc最低买入价格！';
@@ -57,6 +59,7 @@
           return;
         } else {
           chrome.storage.local.set({
+            refreshTime: this.refreshTime,
             btcHigh: this.btcHigh,
             btcLow: this.btcLow,
             usdtHigh: this.usdtHigh,
@@ -83,13 +86,15 @@
     }
   });
 
-  chrome.storage.local.get(['ongoing', 'assertList', 'btcHigh', 'btcLow', 'usdtHigh', 'usdtLow', 'buyMaxLimit', 'sellMaxLimit', 'blacklist'], (result) => {
+  chrome.storage.local.get(['ongoing', 'assertList', 'btcHigh', 'btcLow', 'usdtHigh', 'usdtLow', 'buyMaxLimit', 'sellMaxLimit', 'blacklist', 'refreshTime'], (result) => {
     // 写入当前状态
     App.ongoing = result.ongoing;
 
     // 写入剩余币数
-    App.btcNumber = result.assertList.btc;
-    App.usdtNumber = result.assertList.usdt;
+    if (result.assertList) {
+      App.btcNumber = result.assertList.btc;
+      App.usdtNumber = result.assertList.usdt;
+    }
 
     // 写入价格
     App.btcHigh = result.btcHigh;
@@ -99,5 +104,6 @@
     App.buyMaxLimit = result.buyMaxLimit;
     App.sellMaxLimit = result.sellMaxLimit;
     App.blacklist = Array.isArray(result.blacklist) ? result.blacklist : [];
+    App.refreshTime = result.refreshTime;
   });
 })(window.Vue, window.chrome);
