@@ -16,6 +16,9 @@
 		"default_title": "huobi helper",
 		"default_popup": "popup.html"
 	},
+	"background": {
+		"scripts": ["background.js"]
+	},
 	"content_scripts": [
 		{
 			"matches": ["https://otc.huobi.pro/trade/list.html*"],
@@ -27,6 +30,6 @@
 		}
 	],
 	"permissions": [
-		"storage"
+		"storage", "notifications"
     ]
 }

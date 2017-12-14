@@ -1,4 +1,18 @@
 /**
+ * 获取当前交易金额
+ */
+const getDealPrice = () => {
+  const $dealDetails = $('.deal_details p');
+  const priceWraper = $dealDetails.filter((index) => {
+    const item = $dealDetails.eq(index);
+    return item.find('label').text() === '价格';
+  });
+  const dealPrice = priceWraper.find('span').text().trim();
+
+  return dealPrice;
+}
+
+/**
  * 获取交易限额
  */
 const getDealQuota = () => {
@@ -37,6 +51,7 @@ const getTradeType = () => {
  * 计算得出应该付的钱
  */
 const makeDeal = async () => {
+  const dealPrice = getDealPrice();
   const tradeType = getTradeType();
   const dealQuota = getDealQuota();
 
@@ -121,6 +136,21 @@ const makeDeal = async () => {
         chrome.storage.local.set({
           ongoing: false,
         });
+
+        // 显示通知，播放声音
+        var audio = new Audio('http://boscdn.bpc.baidu.com/v1/developer/3f51911c-7fce-4f97-a54f-17b03d54f244.mp3');
+        audio.play();
+        const message = {
+          action: 'notify_message',
+          data: {
+            id: Math.floor(Date.now() * Math.random()),
+            type: 'basic',
+            title : alertText.replace('请注意价格浮动产生的影响，是否确认', ''),
+            message: '买入价格：' + dealPrice,
+            timeout: 300000,
+          },
+        };
+        chrome.runtime.sendMessage(message);
 
         // chrome 下点击有 bug。
         // http://blog.51cto.com/polaris/269758
