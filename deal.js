@@ -134,9 +134,12 @@ const makeDeal = async () => {
           ongoing: false,
         });
 
-        // 显示通知，播放声音
-        var audio = new Audio('http://boscdn.bpc.baidu.com/v1/developer/3f51911c-7fce-4f97-a54f-17b03d54f244.mp3');
-        audio.play();
+        setInterval(() => {
+          // 显示通知，播放声音
+          var audio = new Audio('http://boscdn.bpc.baidu.com/v1/developer/3f51911c-7fce-4f97-a54f-17b03d54f244.mp3');
+          audio.play();
+        }, 3000);
+
         const message = {
           action: 'notify_message',
           data: {
@@ -163,20 +166,19 @@ const makeDeal = async () => {
     }, 1000);
   });
 
-  // TODO: 检查报错
-
-  // 创建订单成功的确定按钮
-  await new Promise((resolve, reject) => {
-    setTimeout(() => {
-      // chrome 下点击有 bug。
-      // http://blog.51cto.com/polaris/269758
-      // http://johnshen0708.iteye.com/blog/1335978
-      const e = document.createEvent('MouseEvent');
-      e.initEvent('click', false, false);
-      $('.layui-layer-btn0').get(0).dispatchEvent(e);
-      resolve();
-    }, 500);
-  });
+  // TODO: 不按确定按钮了。
+  // // 创建订单成功的确定按钮
+  // await new Promise((resolve, reject) => {
+  //   setTimeout(() => {
+  //     // chrome 下点击有 bug。
+  //     // http://blog.51cto.com/polaris/269758
+  //     // http://johnshen0708.iteye.com/blog/1335978
+  //     const e = document.createEvent('MouseEvent');
+  //     e.initEvent('click', false, false);
+  //     $('.layui-layer-btn0').get(0).dispatchEvent(e);
+  //     resolve();
+  //   }, 500);
+  // });
 };
 
 const start = async () => {
