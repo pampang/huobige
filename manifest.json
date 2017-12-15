@@ -27,6 +27,10 @@
 		{
 			"matches": ["https://otc.huobi.pro/trade/deal/*"],
 			"js": ["vendor/jquery-1.12.4.min.js", "deal.js"]
+		},
+		{
+			"matches": ["https://otc.huobi.pro/"],
+			"js": ["vendor/jquery-1.12.4.min.js", "autoclose.js"]
 		}
 	],
 	"permissions": [
