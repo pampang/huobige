@@ -1,4 +1,4 @@
-function notifyMessage(id, info, timeout) {
+function notifyMessage(id, info) {
   let notifyId = id;
   if (navigator.userAgent.indexOf('Mac OS X') > -1) {
     notifyId = null;
@@ -8,11 +8,19 @@ function notifyMessage(id, info, timeout) {
     type: 'basic',
   }, info));
 
-  if (timeout && notifyId) {
-    setTimeout(() => {
-      chrome.notifications.clear(notifyId);
-    }, timeout);
-  }
+  const timer = setInterval(() => {
+    // 显示通知，播放声音
+    var audio = new Audio('http://boscdn.bpc.baidu.com/v1/developer/3f51911c-7fce-4f97-a54f-17b03d54f244.mp3');
+    audio.play();
+  }, 3000);
+
+  chrome.notifications.onClicked.addListener((params) => {
+    clearInterval(timer);
+  });
+
+  chrome.notifications.onButtonClicked.addListener((params) => {
+    clearInterval(timer);
+  });
 }
 
 chrome.extension.onMessage.addListener((request, sender, sendResponse) => {
@@ -20,7 +28,6 @@ chrome.extension.onMessage.addListener((request, sender, sendResponse) => {
     const data = request.data;
     const id = request.id;
     const type = data.type;
-    const timeout = data.timeout;
     const iconUrl = './images/icon128.png';
 
     const info = {
@@ -29,6 +36,6 @@ chrome.extension.onMessage.addListener((request, sender, sendResponse) => {
       message: data.message
     };
 
-    notifyMessage(id, info, timeout);
+    notifyMessage(id, info);
   }
 });

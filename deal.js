@@ -134,12 +134,6 @@ const makeDeal = async () => {
           ongoing: false,
         });
 
-        setInterval(() => {
-          // 显示通知，播放声音
-          var audio = new Audio('http://boscdn.bpc.baidu.com/v1/developer/3f51911c-7fce-4f97-a54f-17b03d54f244.mp3');
-          audio.play();
-        }, 3000);
-
         const message = {
           action: 'notify_message',
           data: {
@@ -147,7 +141,6 @@ const makeDeal = async () => {
             type: 'basic',
             title : alertText.replace('请注意价格浮动产生的影响，是否确认', ''),
             message: '买入价格：' + dealPrice,
-            timeout: 300000,
           },
         };
         chrome.runtime.sendMessage(message);
