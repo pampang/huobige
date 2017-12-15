@@ -6,6 +6,7 @@ function notifyMessage(id, info) {
 
   chrome.notifications.create(notifyId, Object.assign({
     type: 'basic',
+    requireInteraction: true,
   }, info));
 
   const timer = setInterval(() => {
@@ -21,6 +22,10 @@ function notifyMessage(id, info) {
   chrome.notifications.onButtonClicked.addListener((params) => {
     clearInterval(timer);
   });
+
+  chrome.notifications.onClosed.addListener((params) => {
+    clearInterval(timer);
+  });
 }
 
 chrome.extension.onMessage.addListener((request, sender, sendResponse) => {
@@ -33,7 +38,7 @@ chrome.extension.onMessage.addListener((request, sender, sendResponse) => {
     const info = {
       iconUrl: iconUrl,
       title: data.title,
-      message: data.message
+      message: data.message,
     };
 
     notifyMessage(id, info);
