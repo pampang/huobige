@@ -72,7 +72,8 @@
         }
       },
       addBlackItem() {
-        this.blacklist.push(this.newBlackItem);
+        const newItems = this.newBlackItem.split(' ');
+        this.blacklist = this.blacklist.concat(newItems);
         this.newBlackItem = null;
         chrome.storage.local.set({
           blacklist: this.blacklist,
