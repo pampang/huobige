@@ -71,12 +71,9 @@ const makeDeal = async () => {
     finalCount = Math.min(Number(priceRange.sellMaxLimit), Number(dealQuota.maxQuota));
   }
 
-  console.log(finalCount);
+  console.log('finalCount', finalCount);
   if (Number(finalCount) < Number(dealQuota.minQuota)) {
-    // alert('不满足交易限额条件，本页面将在3秒后关闭');
-    setTimeout(() => {
-      window.close();
-    }, 1000);
+    window.close();
     return;
   }
 
