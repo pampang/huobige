@@ -1,6 +1,6 @@
-const getSearch = (name) => {
+const getSearch = (string, name) => {
 	var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)","i");
-	var result = window.location.search.substr(1).match(reg);
+	var result = string.substr(1).match(reg);
 	if (result!=null) {
 return result[2];
 	} else {
@@ -118,8 +118,9 @@ const checkTrade = async () => {
 			});
 		});
 
-		const coinType = getSearch('coin') == '1' ? 'btc' : 'usdt';
-		const tradeType = getSearch('type') == '1' ? 'buy' : 'sell';
+		const coinType = getSearch(location.hash, 'coin') == '1' ? 'btc' : 'usdt';
+		const tradeType = getSearch(location.hash, 'type') == '1' ? 'buy' : 'sell';
+		console.log(coinType, tradeType);
 
 		// 比较当前配置的价格，如果合适则下单
 		if (coinType === 'btc') {
