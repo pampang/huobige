@@ -13,6 +13,20 @@ const getDealPrice = () => {
 }
 
 /**
+ * 获取币剩余数量
+ */
+const getCoinRemainAmount = () => {
+  const $dealDetails = $('.trade-price p');
+  const priceWraper = $dealDetails.filter((index) => {
+    const item = $dealDetails.eq(index);
+    return item.find('label').text() === '数量';
+  });
+  const dealPrice = priceWraper.find('span').text().trim().match(/(\d+(.\d+)?)/)[1];
+
+  return dealPrice;
+}
+
+/**
  * 获取交易限额
  */
 const getDealQuota = () => {
@@ -47,103 +61,16 @@ const getTradeType = () => {
   }
 }
 
-const Podium = {};
-Podium.keydown = function(k) {
-    var oEvent = document.createEvent('KeyboardEvent');
-
-    // Chromium Hack
-    Object.defineProperty(oEvent, 'keyCode', {
-                get : function() {
-                    return this.keyCodeVal;
-                }
-    });
-    Object.defineProperty(oEvent, 'which', {
-                get : function() {
-                    return this.keyCodeVal;
-                }
-    });
-
-    if (oEvent.initKeyboardEvent) {
-        oEvent.initKeyboardEvent("keydown", true, true, document.defaultView, false, false, false, false, k, k);
-    } else {
-        oEvent.initKeyEvent("keydown", true, true, document.defaultView, false, false, false, false, k, 0);
-    }
-
-    oEvent.keyCodeVal = k;
-
-    if (oEvent.keyCode !== k) {
-        alert("keyCode mismatch " + oEvent.keyCode + "(" + oEvent.which + ")");
-    }
-
-    $('.price-input-list input').eq(0)[0].dispatchEvent(oEvent);
-}
-Podium.keypress = function(k) {
-  var oEvent = document.createEvent('KeyboardEvent');
-
-  // Chromium Hack
-  Object.defineProperty(oEvent, 'keyCode', {
-              get : function() {
-                  return this.keyCodeVal;
-              }
-  });
-  Object.defineProperty(oEvent, 'which', {
-              get : function() {
-                  return this.keyCodeVal;
-              }
-  });
-
-  if (oEvent.initKeyboardEvent) {
-      oEvent.initKeyboardEvent("keypress", true, true, document.defaultView, false, false, false, false, k, k);
-  } else {
-      oEvent.initKeyEvent("keypress", true, true, document.defaultView, false, false, false, false, k, 0);
-  }
-
-  oEvent.keyCodeVal = k;
-
-  if (oEvent.keyCode !== k) {
-      alert("keyCode mismatch " + oEvent.keyCode + "(" + oEvent.which + ")");
-  }
-
-  $('.price-input-list input').eq(0)[0].dispatchEvent(oEvent);
-}
-Podium.keyup = function(k) {
-  var oEvent = document.createEvent('KeyboardEvent');
-
-  // Chromium Hack
-  Object.defineProperty(oEvent, 'keyCode', {
-              get : function() {
-                  return this.keyCodeVal;
-              }
-  });
-  Object.defineProperty(oEvent, 'which', {
-              get : function() {
-                  return this.keyCodeVal;
-              }
-  });
-
-  if (oEvent.initKeyboardEvent) {
-      oEvent.initKeyboardEvent("keyup", true, true, document.defaultView, false, false, false, false, k, k);
-  } else {
-      oEvent.initKeyEvent("keyup", true, true, document.defaultView, false, false, false, false, k, 0);
-  }
-
-  oEvent.keyCodeVal = k;
-
-  if (oEvent.keyCode !== k) {
-      alert("keyCode mismatch " + oEvent.keyCode + "(" + oEvent.which + ")");
-  }
-
-  $('.price-input-list input').eq(0)[0].dispatchEvent(oEvent);
-}
-
 /**
  * 计算得出应该付的钱
  */
 const makeDeal = async () => {
   try {
     const dealPrice = getDealPrice();
+    const coinRemainAmount = getCoinRemainAmount();
     const tradeType = getTradeType();
     const dealQuota = getDealQuota();
+    const maxCanBuyLimit = Math.floor(dealPrice * coinRemainAmount);
 
     // 获取 单次买入最大值 和 单次卖出最大值
     const priceRange = await new Promise((resolve, reject) => {
@@ -152,37 +79,21 @@ const makeDeal = async () => {
       });
     });
 
+console.log(priceRange.buyMaxLimit, dealQuota.maxQuota, maxCanBuyLimit);
+
     let finalCount;
     if (tradeType === 'buy') {
-      // 买入价格高于最大额
-      finalCount = Math.min(Number(priceRange.buyMaxLimit), Number(dealQuota.maxQuota));
+      // 比较 最大买入金额，最大限额，最大可买金额，找最小值
+      finalCount = Math.min(Number(priceRange.buyMaxLimit), Number(dealQuota.maxQuota), Number(maxCanBuyLimit));
     } else if (tradeType === 'sell') {
-      // 买入价格高于最大额
-      finalCount = Math.min(Number(priceRange.sellMaxLimit), Number(dealQuota.maxQuota));
+      // 比较 最大卖出金额，最大限额，最大可卖金额，找最大值
+      finalCount = Math.min(Number(priceRange.sellMaxLimit), Number(dealQuota.maxQuota), Number(maxCanBuyLimit));
     }
 
     if (Number(finalCount) < Number(dealQuota.minQuota)) {
       window.close();
       return;
     }
-
-    $('.price-input-list input').eq(0).on('change', () => {
-      console.log('change');
-    })
-    $('.price-input-list input').eq(0).on('keydown', () => {
-      console.log('keydown');
-    })
-    $('.price-input-list input').eq(0).on('keyup', () => {
-      console.log('keyup');
-    })
-
-    $('.price-input-list input').eq(0).on('keypress', () => {
-      console.log('keypress');
-    })
-
-    $('.price-input-list input').eq(0).on('input', () => {
-      console.log('input');
-    })
 
     $('.price-input-list input').eq(0).val(finalCount);
 
@@ -195,15 +106,12 @@ const makeDeal = async () => {
     // Podium.keydown(108);
     // Podium.keypress(108);
 
-    $('.btn-trade-in').click();
-    return;
-
     // 确定买入
     await new Promise((resolve, reject) => {
       setTimeout(() => {
-        $('#submitOrder').click();
+        $('.btn-trade-in').click();
         resolve();
-      }, 100);
+      }, 500);
     });
 
     // 提交订单按钮
@@ -213,8 +121,7 @@ const makeDeal = async () => {
         // http://blog.51cto.com/polaris/269758
         // http://johnshen0708.iteye.com/blog/1335978
 
-        const alertText = $('.layui-layer-content').text();
-        // alert(alertText);
+        const alertText = $('.ivu-modal-body .content-in').text();
         if (alertText.indexOf('请注意价格浮动产生的影响，是否确认以') > -1) {
           // 到了这一步，停止进行交易了。同时通知人来跟进
           chrome.storage.local.set({
@@ -235,32 +142,26 @@ const makeDeal = async () => {
           // chrome 下点击有 bug。
           // http://blog.51cto.com/polaris/269758
           // http://johnshen0708.iteye.com/blog/1335978
-          const e = document.createEvent('MouseEvent');
-          e.initEvent('click', false, false);
-          $('.layui-layer-btn0').get(0).dispatchEvent(e);
+          const buttons = $('.ivu-modal .ivu-modal-footer button.ivu-btn-info');
+          const confirmButton = buttons.filter((index) => {
+            return buttons.eq(index).text().indexOf('确定') > -1;
+          });
+
+          confirmButton.click();
+
+          // const e = document.createEvent('MouseEvent');
+          // e.initEvent('click', false, false);
+          // $('.layui-layer-btn0').get(0).dispatchEvent(e);
           resolve();
         } else {
           console.log('will shutdown');
           window.close();
         }
-      }, 1000);
+      }, 2000);
     });
 
-    // TODO: 不按确定按钮了。
-    // // 创建订单成功的确定按钮
-    // await new Promise((resolve, reject) => {
-    //   setTimeout(() => {
-    //     // chrome 下点击有 bug。
-    //     // http://blog.51cto.com/polaris/269758
-    //     // http://johnshen0708.iteye.com/blog/1335978
-    //     const e = document.createEvent('MouseEvent');
-    //     e.initEvent('click', false, false);
-    //     $('.layui-layer-btn0').get(0).dispatchEvent(e);
-    //     resolve();
-    //   }, 500);
-    // });
   } catch (error) {
-console.log(error);
+    console.log(error);
     setTimeout(() => {
       makeDeal();
     }, 500);
@@ -280,3 +181,92 @@ const start = async () => {
 }
 
 start();
+
+// const Podium = {};
+// Podium.keydown = function(k) {
+//     var oEvent = document.createEvent('KeyboardEvent');
+
+//     // Chromium Hack
+//     Object.defineProperty(oEvent, 'keyCode', {
+//                 get : function() {
+//                     return this.keyCodeVal;
+//                 }
+//     });
+//     Object.defineProperty(oEvent, 'which', {
+//                 get : function() {
+//                     return this.keyCodeVal;
+//                 }
+//     });
+
+//     if (oEvent.initKeyboardEvent) {
+//         oEvent.initKeyboardEvent("keydown", true, true, document.defaultView, false, false, false, false, k, k);
+//     } else {
+//         oEvent.initKeyEvent("keydown", true, true, document.defaultView, false, false, false, false, k, 0);
+//     }
+
+//     oEvent.keyCodeVal = k;
+
+//     if (oEvent.keyCode !== k) {
+//         alert("keyCode mismatch " + oEvent.keyCode + "(" + oEvent.which + ")");
+//     }
+
+//     $('.price-input-list input').eq(0)[0].dispatchEvent(oEvent);
+// }
+// Podium.keypress = function(k) {
+//   var oEvent = document.createEvent('KeyboardEvent');
+
+//   // Chromium Hack
+//   Object.defineProperty(oEvent, 'keyCode', {
+//               get : function() {
+//                   return this.keyCodeVal;
+//               }
+//   });
+//   Object.defineProperty(oEvent, 'which', {
+//               get : function() {
+//                   return this.keyCodeVal;
+//               }
+//   });
+
+//   if (oEvent.initKeyboardEvent) {
+//       oEvent.initKeyboardEvent("keypress", true, true, document.defaultView, false, false, false, false, k, k);
+//   } else {
+//       oEvent.initKeyEvent("keypress", true, true, document.defaultView, false, false, false, false, k, 0);
+//   }
+
+//   oEvent.keyCodeVal = k;
+
+//   if (oEvent.keyCode !== k) {
+//       alert("keyCode mismatch " + oEvent.keyCode + "(" + oEvent.which + ")");
+//   }
+
+//   $('.price-input-list input').eq(0)[0].dispatchEvent(oEvent);
+// }
+// Podium.keyup = function(k) {
+//   var oEvent = document.createEvent('KeyboardEvent');
+
+//   // Chromium Hack
+//   Object.defineProperty(oEvent, 'keyCode', {
+//               get : function() {
+//                   return this.keyCodeVal;
+//               }
+//   });
+//   Object.defineProperty(oEvent, 'which', {
+//               get : function() {
+//                   return this.keyCodeVal;
+//               }
+//   });
+
+//   if (oEvent.initKeyboardEvent) {
+//       oEvent.initKeyboardEvent("keyup", true, true, document.defaultView, false, false, false, false, k, k);
+//   } else {
+//       oEvent.initKeyEvent("keyup", true, true, document.defaultView, false, false, false, false, k, 0);
+//   }
+
+//   oEvent.keyCodeVal = k;
+
+//   if (oEvent.keyCode !== k) {
+//       alert("keyCode mismatch " + oEvent.keyCode + "(" + oEvent.which + ")");
+//   }
+
+//   $('.price-input-list input').eq(0)[0].dispatchEvent(oEvent);
+// }
