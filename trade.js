@@ -51,16 +51,16 @@ const getCurrentAssertList = () => {
 
 /**
  * 获取当前交易列表
+ *
  */
 const getTradeList = async () => {
 	const tradeList = [];
-	const $priceList = $('.list-content table tbody tr');
+	const $priceList = $('.buytable .table .tables-item');
 	const SEARCH_LIMIT = localStorage.searchLimit || 3;
 	for (let i = 0, len = SEARCH_LIMIT; i < len; i += 1) {
 		const item = $priceList.eq(i);
 		// 获取userId(用以匹配黑名单); 获取出卖的价格；获取买入链接
-		const userName = item.find('.user-info a').text();
-		// const userId = userInfoHref.match(/\?id=(\d*)/)[1];
+		const userName = item.find('.avatar-desc a').text();
 
 		// 检查黑名单
 		const blacklist = await new Promise((resolve, reject) => {
@@ -75,11 +75,11 @@ const getTradeList = async () => {
 
 
 		// 获取价格
-		const tradePriceText = item.find('.price p').text().trim().replace(',', '');
+		const tradePriceText = item.find('.totals .font16 span').text().trim().replace(',', '');
 		const tradePrice = tradePriceText.match(/(\d+(.\d+)?)/)[1];
 
 		// 获取下单链接
-		const tradeHref = location.origin + item.find('.Btn a').attr('href');
+		const tradeHref = location.origin + item.find('.group-btn a').attr('href');
 
 		tradeList.push({
 			userName,
@@ -97,48 +97,54 @@ const getTradeList = async () => {
 }
 
 const checkTrade = async () => {
-	const tradeList = await getTradeList();
-	const assertList = getCurrentAssertList();
+	try {
+		const tradeList = await getTradeList();
+		const assertList = getCurrentAssertList();
 
-	// if (!tradeList || !assertList) {
-	if (!tradeList) {
-		this.timer = setTimeout(() => {
+		// if (!tradeList || !assertList) {
+		if (!tradeList) {
+			this.timer = setTimeout(() => {
+				checkTrade();
+			}, 500);
+			return;
+		} else {
+			clearTimeout(this.timer);
+		}
+
+		// 获取当前价格
+		const priceRange = await new Promise((resolve, reject) => {
+			chrome.storage.local.get(['btcHigh', 'btcLow', 'usdtHigh', 'usdtLow'], (result) => {
+				resolve(result);
+			});
+		});
+
+		const coinType = getSearch('coin') == '1' ? 'btc' : 'usdt';
+		const tradeType = getSearch('type') == '1' ? 'buy' : 'sell';
+
+		// 比较当前配置的价格，如果合适则下单
+		if (coinType === 'btc') {
+			// 比特币交易
+			tradeList.forEach((tradeItem) => {
+				if (compareTrade(tradeType, tradeItem.tradePrice, priceRange.btcLow, priceRange.btcHigh)) {
+					console.log('shouldGo', tradeItem);
+					window.open(tradeItem.tradeHref);
+				}
+			});
+		}
+
+		if (coinType === 'usdt') {
+			// usdt交易
+			tradeList.forEach((tradeItem) => {
+				if (compareTrade(tradeType, tradeItem.tradePrice, priceRange.usdtLow, priceRange.usdtHigh)) {
+					console.log('shouldGo', tradeItem);
+					window.open(tradeItem.tradeHref);
+				}
+			});
+		}
+	} catch (error) {
+		setTimeout(() => {
 			checkTrade();
 		}, 500);
-		return;
-	} else {
-		clearTimeout(this.timer);
-	}
-
-	// 获取当前价格
-	const priceRange = await new Promise((resolve, reject) => {
-		chrome.storage.local.get(['btcHigh', 'btcLow', 'usdtHigh', 'usdtLow'], (result) => {
-			resolve(result);
-		});
-	});
-
-	const coinType = getSearch('coin') == '1' ? 'btc' : 'usdt';
-	const tradeType = getSearch('type') == '1' ? 'buy' : 'sell';
-
-	// 比较当前配置的价格，如果合适则下单
-	if (coinType === 'btc') {
-		// 比特币交易
-		tradeList.forEach((tradeItem) => {
-			if (compareTrade(tradeType, tradeItem.tradePrice, priceRange.btcLow, priceRange.btcHigh)) {
-				console.log('shouldGo', tradeItem);
-				window.open(tradeItem.tradeHref);
-			}
-		});
-	}
-
-	if (coinType === 'usdt') {
-		// usdt交易
-		tradeList.forEach((tradeItem) => {
-			if (compareTrade(tradeType, tradeItem.tradePrice, priceRange.usdtLow, priceRange.usdtHigh)) {
-				console.log('shouldGo', tradeItem);
-				window.open(tradeItem.tradeHref);
-			}
-		});
 	}
 }
 

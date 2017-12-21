@@ -21,15 +21,17 @@
 	},
 	"content_scripts": [
 		{
-			"matches": ["https://otc.huobi.pro/trade/list.html*"],
+			"matches": ["https://otc.huobi.pro/*"],
+			"include_globs": ["*#/trade/list*"],
 			"js": ["vendor/jquery-1.12.4.min.js", "trade.js"]
 		},
 		{
-			"matches": ["https://otc.huobi.pro/trade/deal/*"],
+			"matches": ["https://otc.huobi.pro/*"],
+			"include_globs": ["*#/tradeInfo?id=*"],
 			"js": ["vendor/jquery-1.12.4.min.js", "deal.js"]
 		},
 		{
-			"matches": ["https://otc.huobi.pro/"],
+			"matches": ["https://otc.huobi.pro/123123123123123123123"],
 			"js": ["vendor/jquery-1.12.4.min.js", "autoclose.js"]
 		}
 	],
