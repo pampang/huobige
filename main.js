@@ -1,3 +1,11 @@
+function openNewWindow(url) {
+  var a = document.createElement('a');
+  a.setAttribute('href', url);
+  a.setAttribute('target', '_blank');
+  document.body.appendChild(a);
+  a.click();
+}
+
 ((Vue, chrome) => {
   const App = new Vue({
     el: '#root',
@@ -31,8 +39,8 @@
       },
       restart() {
         this.ongoing = true;
-        window.open('https://otc.huobi.pro/#/trade/list?coin=1&type=1');
-        window.open('https://otc.huobi.pro/#/trade/list?coin=2&type=1');
+        openNewWindow('https://otc.huobi.pro/#/trade/list?coin=1&type=1');
+        openNewWindow('https://otc.huobi.pro/#/trade/list?coin=2&type=1');
       },
       toggleModify() {
         this.modifying = !this.modifying;
