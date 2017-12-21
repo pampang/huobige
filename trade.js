@@ -68,7 +68,7 @@ const getTradeList = async () => {
 	for (let i = 0, len = SEARCH_LIMIT; i < len; i += 1) {
 		const item = $priceList.eq(i);
 		// 获取userId(用以匹配黑名单); 获取出卖的价格；获取买入链接
-		const userName = item.find('.avatar-desc a').text();
+		const userName = item.find('.avatar-desc a').text().trim();
 
 		// 检查黑名单
 		const blacklist = await new Promise((resolve, reject) => {
