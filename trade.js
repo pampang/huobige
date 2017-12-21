@@ -181,8 +181,9 @@ const start = async () => {
 
 	if (result.ongoing && result.refreshTime) {
 		setTimeout(() => {
-			// location.reload();
-			location.replace(location.href);
+			// location.replace(location.href);
+			window.open(location.href);
+			window.close();
 		}, Number(result.refreshTime) * 1000);
 	}
 }
