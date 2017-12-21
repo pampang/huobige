@@ -7,7 +7,7 @@ const getDealPrice = () => {
     const item = $dealDetails.eq(index);
     return item.find('label').text() === '价格';
   });
-  const dealPrice = priceWraper.find('span').text().trim().match(/(\d+(.\d+)?)/)[1];
+  const dealPrice = priceWraper.find('span').text().trim().replace(/,/g, '').match(/(\d+(.\d+)?)/)[1];
 
   return dealPrice;
 }
@@ -21,7 +21,7 @@ const getCoinRemainAmount = () => {
     const item = $dealDetails.eq(index);
     return item.find('label').text() === '数量';
   });
-  const dealPrice = priceWraper.find('span').text().trim().match(/(\d+(.\d+)?)/)[1];
+  const dealPrice = priceWraper.find('span').text().trim().replace(/,/g, '').match(/(\d+(.\d+)?)/)[1];
 
   return dealPrice;
 }
@@ -70,7 +70,9 @@ const makeDeal = async () => {
     const coinRemainAmount = getCoinRemainAmount();
     const tradeType = getTradeType();
     const dealQuota = getDealQuota();
-    const maxCanBuyLimit = Math.floor(dealPrice * coinRemainAmount);
+    const maxCanBuyLimit = Math.floor(Number(dealPrice) * Number(coinRemainAmount));
+
+console.log(dealPrice, coinRemainAmount, tradeType, dealQuota, maxCanBuyLimit);
 
     // 获取 单次买入最大值 和 单次卖出最大值
     const priceRange = await new Promise((resolve, reject) => {
@@ -78,8 +80,6 @@ const makeDeal = async () => {
         resolve(result);
       });
     });
-
-console.log(priceRange.buyMaxLimit, dealQuota.maxQuota, maxCanBuyLimit);
 
     let finalCount;
     if (tradeType === 'buy') {
