@@ -1,10 +1,10 @@
-function openNewWindow(url) {
-  var a = document.createElement('a');
-  a.setAttribute('href', url);
-  a.setAttribute('target', '_blank');
-  document.body.appendChild(a);
-  a.click();
-}
+// function openNewWindow(url) {
+//   var a = document.createElement('a');
+//   a.setAttribute('href', url);
+//   a.setAttribute('target', '_blank');
+//   document.body.appendChild(a);
+//   a.click();
+// }
 
 ((Vue, chrome) => {
   const App = new Vue({
@@ -39,8 +39,12 @@ function openNewWindow(url) {
       },
       restart() {
         this.ongoing = true;
-        openNewWindow('https://otc.huobi.pro/#/trade/list?coin=1&type=1');
-        openNewWindow('https://otc.huobi.pro/#/trade/list?coin=2&type=1');
+        setTimeout(() => {
+          window.open('https://otc.huobi.pro/#/trade/list?coin=1&type=1');
+        }, 0);
+        setTimeout(() => {
+          window.open('https://otc.huobi.pro/#/trade/list?coin=2&type=1');
+        }, 0);
       },
       toggleModify() {
         this.modifying = !this.modifying;

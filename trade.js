@@ -1,10 +1,10 @@
-function openNewWindow(url) {
-  var a = document.createElement('a');
-  a.setAttribute('href', url);
-  a.setAttribute('target', '_blank');
-  document.body.appendChild(a);
-  a.click();
-}
+// function openNewWindow(url) {
+//   var a = document.createElement('a');
+//   a.setAttribute('href', url);
+//   a.setAttribute('target', '_blank');
+//   document.body.appendChild(a);
+//   a.click();
+// }
 
 const getParams = (string, name) => {
 	var reg = new RegExp(name + "=([^&]*)(&|$)","i");
@@ -136,7 +136,9 @@ const checkTrade = async () => {
 			tradeList.forEach((tradeItem) => {
 				if (compareTrade(tradeType, tradeItem.tradePrice, priceRange.btcLow, priceRange.btcHigh)) {
 					console.log('shouldGo', tradeItem);
-					openNewWindow(tradeItem.tradeHref);
+					setTimeout(() => {
+						window.open(tradeItem.tradeHref);
+					}, 0);
 				}
 			});
 		}
@@ -146,7 +148,9 @@ const checkTrade = async () => {
 			tradeList.forEach((tradeItem) => {
 				if (compareTrade(tradeType, tradeItem.tradePrice, priceRange.usdtLow, priceRange.usdtHigh)) {
 					console.log('shouldGo', tradeItem);
-					openNewWindow(tradeItem.tradeHref);
+					setTimeout(() => {
+						window.open(tradeItem.tradeHref);
+					}, 0);
 				}
 			});
 		}
@@ -190,7 +194,7 @@ const start = async () => {
 	if (result.ongoing && result.refreshTime) {
 		setTimeout(() => {
 			// location.replace(location.href);
-			openNewWindow(location.href);
+			window.open(location.href);
 			window.close();
 		}, Number(result.refreshTime) * 1000);
 	}
