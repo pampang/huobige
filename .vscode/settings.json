@@ -1,0 +1,50 @@
+// 将设置放入此文件中以覆盖默认设置
+{
+"typescript.tsdk": "/usr/local/lib/node_modules/typescript/lib",
+"editor.fontSize": 15,
+"editor.fontFamily": "DejaVu Sans Mono, Menlo, Monaco, 'Courier New', monospace",
+"editor.tabSize": 2,
+// fileheader
+"fileheader.Author": "PAMPANG",
+"fileheader.LastModifiedBy": "PAMPANG",
+// 允许搜索node_modules
+"search.exclude": {
+"**/node_modules": false,
+"**/bower_components": false
+},
+"java.errors.incompleteClasspath.severity": "ignore",
+"files.trimTrailingWhitespace": true,
+"editor.renderIndentGuides": false,
+"editor.renderLineHighlight": "gutter",
+"editor.wordWrap": "on",
+"window.zoomLevel": 0,
+"editor.parameterHints": false,
+"workbench.iconTheme": "material-icon-theme",
+"workbench.editor.enablePreview": false,
+"workbench.editor.enablePreviewFromQuickOpen": false,
+"explorer.openEditors.visible": 0,
+"editor.minimap.enabled": true,
+"workbench.colorTheme": "Default Light+",
+"editor.codeLens": true,
+"extensions.ignoreRecommendations": true,
+"prettier.eslintIntegration": true,
+"[python]": {
+"editor.tabSize": 4
+},
+"sync.gist": "ade0e79f52b633e8d3d93161cf32d6c4",
+"sync.lastUpload": "2017-08-11T02:44:40.794Z",
+"sync.autoDownload": false,
+"sync.autoUpload": false,
+"sync.lastDownload": "",
+"sync.forceDownload": false,
+"sync.anonymousGist": false,
+"sync.host": "",
+"sync.pathPrefix": "",
+"sync.quietSync": false,
+"sync.askGistName": false,
+"python.linting.pylintEnabled": false,
+"python.linting.flake8Enabled": true,
+"python.formatting.provider": "yapf",
+"workbench.startupEditor": "newUntitledFile",
+"window.title": "${activeEditorMedium}${separator}${rootName}"
+}
